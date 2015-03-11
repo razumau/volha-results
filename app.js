@@ -9,10 +9,9 @@ var studentList = {
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1_mNN7NPsxEUaDuH_j6SN4KZLvYXQeLWXiWKZCW_y2c8&output=html',
 	columns: ['команда', 'город'],
 	check: 'эк',
-	sort: 'рейтинг'
+	sort: 'рейтинг',
+	interval: 120000
 }
-
-//setTimeout(table(studentList), 50)
 
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -38,7 +37,7 @@ function getTable (tableParams) {
 				console.log(error)
 		})
 	return result
-	
+
 }
 
 app.get('/', function(req, res) {

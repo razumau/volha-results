@@ -5,6 +5,26 @@ module.exports = function(settings) {
 
     options = settings
 
+    if (existsInDb(options.url)) {
+        table = getTable(options.url)
+    }
+    else {
+        runTabletop()
+    }
+        create 
+        start timer
+        table = results from db
+
+    
+
+    return {
+        html: function() {
+            return table
+        }
+    }
+}
+
+function runTabletop () {
     var Tabletop = require('tabletop')
     try {
         Tabletop.init({
@@ -14,12 +34,6 @@ module.exports = function(settings) {
         })
     } catch (error) {
         console.log(error)
-    }
-
-    return {
-        html: function() {
-            return table
-        }
     }
 }
 
@@ -88,4 +102,9 @@ function createTable(data) {
     table = tableArray.join('')
     saveToDb()
 
+    setInterval(updateTable, options.interval)
+}
+
+function updateTable () {
+    
 }
