@@ -5,9 +5,7 @@ module.exports = function(settings) {
 
     options = settings
 
-    //console.log(this.options)
-
-    /*var Tabletop = require('tabletop')
+    var Tabletop = require('tabletop')
     try {
         Tabletop.init({
             key: options.url,
@@ -16,29 +14,10 @@ module.exports = function(settings) {
         })
     } catch (error) {
         console.log(error)
-    }*/
-
-    var data = [{
-        'команда': 'Я сегодня не могу',
-        'город': 'Минск',
-        rowNumber: 32
-    }, {
-        'команда': 'Маленькие люди',
-        'город': 'Витебск',
-        rowNumber: 33
-    }, {
-        'команда': 'Победоносный голос верующего',
-        'город': 'Москва',
-        rowNumber: 34
-    }]
-
-    createTable(data)
-    saveToDb()
-
+    }
 
     return {
         html: function() {
-            //console.log(table)
             return table
         }
     }
@@ -46,13 +25,26 @@ module.exports = function(settings) {
 
 function addToTable(array, v, number, columns) {
 
+    var isEmpty = false
+
+    columns.forEach(function isRowEmpty (column, index) {
+        isEmpty = (v[column] == '' || v[column] == ' ')
+        console.log(v[column])
+    })
+
+    if (isEmpty) return
+
     array.push('<tr><td>')
     array.push((number).toString())
     array.push('</td>')
 
     columns.forEach(function(column, index) {
         array.push('<td>')
+        if (v[options.check])
+            array.push('<b>')
         array.push(v[column])
+        if (v[options.check])
+            array.push('</b>')
         array.push('</td>')
     })
 
@@ -69,7 +61,7 @@ function saveToDb() {
         assert.equal(null, err)
         console.log("Connected correctly to the server")
 
-        var collection = db.collection('results')
+        var collection = db.collection('results_test')
 
         collection.insert([{
             url: options.url,
@@ -81,7 +73,6 @@ function saveToDb() {
         }
         )
 
-
         db.close()
     });
 }
@@ -90,18 +81,11 @@ function createTable(data) {
     var tableArray = [],
         count = 1
 
-    //console.log(this)
-    //console.log(options)
-
-
-
     data.forEach(function(v, index) {
         addToTable(tableArray, v, count++, options.columns)
     })
 
-
-    console.log('data:\n' + data)
-    return table = tableArray.join('')
-
+    table = tableArray.join('')
+    saveToDb()
 
 }

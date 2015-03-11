@@ -7,7 +7,8 @@ var i = 0
 
 var studentList = {
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1_mNN7NPsxEUaDuH_j6SN4KZLvYXQeLWXiWKZCW_y2c8&output=html',
-	columns: ['команда', 'город', 'рейтинг'],
+	columns: ['команда', 'город'],
+	check: 'эк',
 	sort: 'рейтинг'
 }
 
@@ -19,6 +20,27 @@ app.all('/*', function(req, res, next) {
   next();
 });
 
+function getTable (tableParams) {
+	var t, result
+
+	async.series([
+			function(callback) {
+				t = table(tableParams)
+				callback(null, t)
+			},
+			function(callback) {
+				result = t.html()
+				callback(null, result)
+			}
+		],
+		function callback (error, results) {
+			if (error) 
+				console.log(error)
+		})
+	return result
+	
+}
+
 app.get('/', function(req, res) {
 
 	var t, result = 'asdf'
@@ -28,11 +50,9 @@ app.get('/', function(req, res) {
 	async.series([
 			function(callback) {
 				t = table(studentList)
-				console.log ('t = ' + t + '\n')
 				callback(null, t)
 			},
 			function(callback) {
-				console.log('2nd function')
 				result = t.html()
 				callback(null, result)
 			}
@@ -41,13 +61,8 @@ app.get('/', function(req, res) {
 			if (error) 
 				console.log(error)
 		})
-		//console.log('after')
+		
 		res.send(result)
-		//console.log(t.html())
-})
-
-app.get('/about', function(req, res) {
-	res.send(i.toString())
 })
 
 var server = app.listen(3000, function() {
