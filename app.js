@@ -14,12 +14,12 @@ var studentList = {
 }
 
 app.all('/*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	next();
 });
 
-function getTable (tableParams) {
+function getTable(tableParams) {
 	var t, result
 
 	async.series([
@@ -32,8 +32,8 @@ function getTable (tableParams) {
 				callback(null, result)
 			}
 		],
-		function callback (error, results) {
-			if (error) 
+		function callback(error, results) {
+			if (error)
 				console.log(error)
 		})
 	return result
@@ -46,7 +46,7 @@ app.get('/', function(req, res) {
 		//console.log('before')
 		//res.send(table(studentList).html())
 
-	async.series([
+	/*async.series([
 			function(callback) {
 				t = table(studentList)
 				callback(null, t)
@@ -59,9 +59,13 @@ app.get('/', function(req, res) {
 		function callback (error, results) {
 			if (error) 
 				console.log(error)
-		})
-		
-		res.send(result)
+		})*/
+
+	result = getTable(studentList)
+
+	console.log(result)
+
+	res.send(result)
 })
 
 var server = app.listen(3000, function() {
