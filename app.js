@@ -1,7 +1,6 @@
 var express = require('express')
 var app = express()
 var table = require('./table.js')
-//var async = require('async')
 var Q = require('q')
 
 var i = 0
