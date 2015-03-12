@@ -52,26 +52,11 @@ function getTable(tableParams) {
 
 app.get('/', function(req, res) {
 
-	var t, result = 'asdf'
+	var t, result = ''
 	
-	/*async.series([
-			function(callback) {
-				t = table(studentList)
-				callback(null, t)
-			},
-			function(callback) {
-				result = t.html()
-				callback(null, result)
-			}
-		],
-		function callback (error, results) {
-			if (error) 
-				console.log(error)
-		})*/
-
-	//result = 
 	var deferred = Q.defer()
-	console.log('t in app.get: ' + t)
+
+	//console.log('t in app.get: ' + t)
 	deferred.promise.then(function (t) {
 		return t.html()
 	}).then (function (result){
