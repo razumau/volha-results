@@ -2,7 +2,8 @@ var options = '',
     table = '',
     collectionName = 'results_test',
     dbUrl = 'mongodb://localhost:27017/results',
-    async = require('async')
+    //async = require('async'),
+    Q = require('q')
 
 module.exports = function(settings) {
 
@@ -10,11 +11,19 @@ module.exports = function(settings) {
 
     var tabletop, data
 
-    table = getTable(options.url)
+    var deferred = Q.defer()
 
-    console.log(table)
+    
+    deferred.promise.
+        then(function (res) {
+            console.log('res: ' + res)
+        }
+        )
+    deferred.resolve(readTable(options.url))
 
-    if (!table) {
+    console.log('table: ' + table)
+
+    /*if (!table) {
         tabletop = runTabletop()
         /*async.series([
                 tabletop.fetch
@@ -36,25 +45,29 @@ module.exports = function(settings) {
             function callback(error, results) {
                 if (error)
                     console.log(error)
-            })*/
-    }
+            })
+    }*/
 
     return {
         html: function() {
-            return table
+            if (table)
+                return table
+            else 
+                return readTable(options.url)
         }
     }
 }
 
-function getTable(url) {
+function readTable(url) {
+
+    var deferred = Q.defer()
+
     var MongoClient = require('mongodb').MongoClient,
         t = null
 
     MongoClient.connect(dbUrl, function(err, db) {
         //assert.equal(null, err)
         console.log("Connected to read table")
-        console.log(options.url)
-
         var collection = db.collection(collectionName)
 
         //console.log(collection.findOne)
@@ -65,16 +78,14 @@ function getTable(url) {
             function(error, document) {
                 if (document)
                     t = document.table
+                console.log('db error: ' + error)
                 db.close()
-                return t
+                deferred.resolve(t)
+                
             })
-
-    
-
         
     })
-
-    return t
+    return deferred.promise
 }
 
 function runTabletop() {
@@ -156,7 +167,7 @@ function createTable(data) {
     table = tableArray.join('')
     saveToDb()
 
-    setInterval(saveToDb, options.interval)
+    //setInterval(saveToDb, options.interval)
 
     return table
 }
