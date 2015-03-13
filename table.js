@@ -1,12 +1,16 @@
 var options = '',
     table = '',
-    collectionName = 'results_test2',
+    collectionName = 'results_test4',
     dbUrl = 'mongodb://localhost:27017/results',
     Q = require('q')
 
 var deferredForTabletop = Q.defer()
 
-module.exports = function(settings) {
+function Table(settings) {
+
+    /*if (!(this instanceof Table)) {
+        return new Table(settings);
+    } */
 
     options = settings
     var tabletop, data
@@ -15,31 +19,30 @@ module.exports = function(settings) {
 
     deferred.promise.
     then(function(res) {
-        console.log('res: ' + res)
+        console.log('res: ')
     })
 
     deferred.resolve(readTable(options.url))
 
-    console.log('table: ' + table)
+    console.log('table: ')
 
     if (!table || table == '') {
 
         runTabletop()
 
-        deferredForTabletop.promise.then(function(table){
-                return saveToDb()
-        })  
-    }
+        console.log('running tabletop')
 
-    return {
-        html: function() {
-            if (table)
-                return table
-            else
-                return readTable(options.url)
-        }
+        deferredForTabletop.promise.then(function(table) {
+            return saveToDb()
+        })
     }
 }
+
+Table.prototype.html = function html() {
+    return table
+}
+
+module.exports = Table
 
 function readTable(url) {
 
@@ -72,10 +75,10 @@ function readTable(url) {
 }
 
 function runTabletop() {
-    var Tabletop = require('tabletop'),
-        tabletop
+    var Tabletop = require('tabletop')
     try {
-        tabletop = Tabletop.init({
+        console.log('starting tabletop now')
+        Tabletop.init({
             key: options.url,
             callback: createTable,
             simpleSheet: true
@@ -91,7 +94,6 @@ function addToTable(array, v, number, columns) {
 
     columns.forEach(function isRowEmpty(column, index) {
         isEmpty = (v[column] == '' || v[column] == ' ')
-        console.log(v[column])
     })
 
     if (isEmpty) return
@@ -115,23 +117,28 @@ function addToTable(array, v, number, columns) {
 
 function saveToDb() {
     var MongoClient = require('mongodb').MongoClient
-    //var deferred = Q.defer()
+        //var deferred = Q.defer()
 
     MongoClient.connect(dbUrl, function(err, db) {
         console.log("Connected to save table")
 
         var collection = db.collection(collectionName)
 
-        collection.insert([{
-            url: options.url,
-            table: table,
-            time: new Date()
-        }], function(error, result) {
-            console.log('db error: ' + error)
-            db.close()
-            return result
-        })
-        
+        collection.update({
+                url: options.url
+            }, {
+                url: options.url,
+                table: table,
+                time: new Date()
+            }, {
+                upsert: true
+            },
+            function(error, result) {
+                console.log('db error: ' + error)
+                db.close()
+                return result
+            })
+
     })
 }
 
@@ -149,5 +156,6 @@ function createTable(data) {
 }
 
 function updateTable() {
-    console.log(tabletop)
+
+
 }
