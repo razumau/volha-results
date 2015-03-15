@@ -1,161 +1,181 @@
-var options = '',
-    table = '',
-    collectionName = 'results_test4',
+var collectionName = 'results_test5',
     dbUrl = 'mongodb://localhost:27017/results',
     Q = require('q')
 
-var deferredForTabletop = Q.defer()
+var Table = function(settings) {
 
-function Table(settings) {
-
-    /*if (!(this instanceof Table)) {
+    if (!this || !(this instanceof Table)) {
         return new Table(settings);
-    } */
-
-    options = settings
-    var tabletop, data
-
-    var deferred = Q.defer()
-
-    deferred.promise.
-    then(function(res) {
-        console.log('res: ')
-    })
-
-    deferred.resolve(readTable(options.url))
-
-    console.log('table: ')
-
-    if (!table || table == '') {
-
-        runTabletop()
-
-        console.log('running tabletop')
-
-        deferredForTabletop.promise.then(function(table) {
-            return saveToDb()
-        })
     }
+
+    this.url = settings.url
+    this.columns = settings.columns
+    this.check = settings.check
+    this.interval = settings.interval
+    this.table = ''
+    this.deferredForTabletop// = Q.defer()
+
 }
 
-Table.prototype.html = function html() {
-    return table
-}
 
 module.exports = Table
 
-function readTable(url) {
+Table.prototype = {
 
-    var deferred = Q.defer()
+    init: function init() {
+        var deferred = Q.defer()
+        var runTabletop = this.runTabletop
+        var that = this
 
-    var MongoClient = require('mongodb').MongoClient,
-        t = null
 
-    MongoClient.connect(dbUrl, function(err, db) {
-        //assert.equal(null, err)
-        console.log("Connected to read table")
-        var collection = db.collection(collectionName)
-
-        //console.log(collection.findOne)
-
-        var d = collection.findOne({
-                "url": options.url,
-            },
-            function(error, document) {
-                if (document)
-                    t = document.table
-                console.log('db error: ' + error)
-                db.close()
-                deferred.resolve(t)
-
-            })
-
-    })
-    return deferred.promise
-}
-
-function runTabletop() {
-    var Tabletop = require('tabletop')
-    try {
-        console.log('starting tabletop now')
-        Tabletop.init({
-            key: options.url,
-            callback: createTable,
-            simpleSheet: true
+        deferred.promise.then(function(t) {
+            that.table = t
+            if (!that.table || that.table == '') {
+                that.updateTable.call(that, t)
+            }
         })
-    } catch (error) {
-        console.log(error)
-    }
-}
 
-function addToTable(array, v, number, columns) {
+        deferred.resolve(this.readTable(this.url))
+        return deferred
+    },
 
-    var isEmpty = false
+    updateTable: function updateTable(t) {
 
-    columns.forEach(function isRowEmpty(column, index) {
-        isEmpty = (v[column] == '' || v[column] == ' ')
-    })
+        this.deferredForTabletop = Q.defer()
+        if (typeof t === 'undefined')
+            t = this.table
 
-    if (isEmpty) return
+        //if (!that.table || that.table == '') {
 
-    array.push('<tr><td>')
-    array.push((number).toString())
-    array.push('</td>')
+        console.log('running tabletop')
+        this.runTabletop()
 
-    columns.forEach(function(column, index) {
-        array.push('<td>')
-        if (v[options.check])
-            array.push('<b>')
-        array.push(v[column])
-        if (v[options.check])
-            array.push('</b>')
-        array.push('</td>')
-    })
+        var that = this
 
-    array.push('</tr>')
-}
+        this.deferredForTabletop.promise.then(function(table) {
 
-function saveToDb() {
-    var MongoClient = require('mongodb').MongoClient
-        //var deferred = Q.defer()
+            return that.saveToDb()
+        })
 
-    MongoClient.connect(dbUrl, function(err, db) {
-        console.log("Connected to save table")
+    },
 
-        var collection = db.collection(collectionName)
+    readTable: function readTable(url) {
 
-        collection.update({
-                url: options.url
-            }, {
-                url: options.url,
-                table: table,
-                time: new Date()
-            }, {
-                upsert: true
-            },
-            function(error, result) {
-                console.log('db error: ' + error)
-                db.close()
-                return result
+        var deferred = Q.defer()
+
+        var MongoClient = require('mongodb').MongoClient,
+            t = null,
+            url = this.url
+        MongoClient.connect(dbUrl, function(err, db) {
+            //assert.equal(null, err)
+            console.log("Connected to read table")
+            var collection = db.collection(collectionName)
+
+            var d = collection.findOne({
+                    "url": url,
+                },
+                function(error, document) {
+                    //console.log(document)
+                    if (document)
+                        t = document.table
+                        //console.log('db error: ' + error)
+                    db.close()
+                    deferred.resolve(t)
+
+                })
+
+        })
+        return deferred.promise
+    },
+
+    runTabletop: function runTabletop() {
+        console.log('asdfasdf')
+        var Tabletop = require('tabletop')
+
+        try {
+            console.log('starting tabletop now')
+            Tabletop.init({
+                key: this.url,
+                callback: this.createTable,
+                simpleSheet: true,
+                callbackContext: this
             })
+        } catch (error) {
+            console.log(error)
+        }
+    },
 
-    })
-}
+    addToTable: function addToTable(array, v, number, columns, check) {
 
-function createTable(data) {
-    var tableArray = [],
-        count = 1
+        var isEmpty = false
+        var italic = check && (!v[check] || v[check] === '')
 
-    data.forEach(function(v, index) {
-        addToTable(tableArray, v, count++, options.columns)
-    })
+        columns.forEach(function isRowEmpty(column, index) {
+            isEmpty = (v[column] == '' || v[column] == ' ')
+        })
 
-    table = tableArray.join('')
+        if (isEmpty) return
 
-    deferredForTabletop.resolve(table)
-}
+        array.push('<tr><td>')
+        array.push((number).toString())
+        array.push('</td>')
 
-function updateTable() {
+        columns.forEach(function(column, index) {
+            array.push('<td>')
+            
+            if (italic)
+                array.push('<i>')
+            array.push(v[column])
+            if (italic)
+                array.push('</i>')
+            array.push('</td>')
+        })
 
+        array.push('</tr>')
+    },
 
+    saveToDb: function saveToDb() {
+        var MongoClient = require('mongodb').MongoClient
+            //var deferred = Q.defer()
+        var that = this
+        console.log('in saveToDb')
+        MongoClient.connect(dbUrl, function(err, db) {
+            console.log("Connected to save table")
+
+            var collection = db.collection(collectionName)
+
+            collection.update({
+                    url: that.url
+                }, {
+                    url: that.url,
+                    table: that.table,
+                    time: new Date()
+                }, {
+                    upsert: true
+                },
+                function(error, result) {
+                    //console.log('db error: ' + error)
+                    db.close()
+                    return result
+                })
+
+        })
+    },
+
+    createTable: function createTable(data) {
+        var tableArray = [],
+            count = 1
+        console.log('in createTable')
+        var that = this
+        data.forEach(function(v, index) {
+            that.addToTable(tableArray, v, count++, that.columns, that.check)
+        })
+
+        this.table = tableArray.join('')
+        this.deferredForTabletop.resolve(this.table)
+    },
+
+    html: function html() {
+        return this.table
+    }
 }
