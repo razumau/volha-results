@@ -20,7 +20,7 @@ var params = [{
 {
 	//чгк
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=11-JsYW-XRNdkFrqlWQ3c6RBGSMWllYWZE26iO4qiIFw&output=html',
-	columns: ['команда', 'сумма', 'первый', 'второй', 'третий', 'четвёртый', 'пятый', 'рейтинг'],
+	columns: ['команда', 'сумма', 'первый', 'второй', 'третий', 'четвёртый', 'пятый'],
 	interval: 120000,
 	sort: 'сумма',
 	sort2: 'рейтинг'
@@ -28,10 +28,11 @@ var params = [{
 {
 	//своя игра
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1LsvBGl8ZgxDQIaHLcLpHqAxuHOmUG1PBTasB2YMsFAw&output=html',
-	columns: ['игрок', 'сумма', '50'],
-	interval: 600000,
+	columns: ['игрок', 'сумма'],
+	interval: 120000,
 	sort: 'сумма',
-	sort2: '50'
+	sort2: 'пятьдесят',
+	sort3: 'сорок'
 }]
 
 function initializeTables() {

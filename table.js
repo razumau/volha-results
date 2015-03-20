@@ -11,9 +11,12 @@ var Table = function(settings) {
     this.url = settings.url
     this.columns = settings.columns
     this.check = settings.check
+    this.sort = settings.sort
+    this.sort2 = settings.sort2
+    this.sort3 = settings.sort3
     this.interval = settings.interval
     this.table = ''
-    this.deferredForTabletop// = Q.defer()
+    this.deferredForTabletop // = Q.defer()
 
 }
 
@@ -47,7 +50,7 @@ Table.prototype = {
 
         //if (!that.table || that.table == '') {
 
-        console.log('running tabletop')
+        //console.log('running tabletop')
         this.runTabletop()
 
         var that = this
@@ -68,7 +71,7 @@ Table.prototype = {
             url = this.url
         MongoClient.connect(dbUrl, function(err, db) {
             //assert.equal(null, err)
-            console.log("Connected to read table")
+            //console.log("Connected to read table")
             var collection = db.collection(collectionName)
 
             var d = collection.findOne({
@@ -78,7 +81,7 @@ Table.prototype = {
                     //console.log(document)
                     if (document)
                         t = document.table
-                        //console.log('db error: ' + error)
+                        console.log('db error: ' + error)
                     db.close()
                     deferred.resolve(t)
 
@@ -89,11 +92,10 @@ Table.prototype = {
     },
 
     runTabletop: function runTabletop() {
-        console.log('asdfasdf')
         var Tabletop = require('tabletop')
 
         try {
-            console.log('starting tabletop now')
+            //console.log('starting tabletop now')
             Tabletop.init({
                 key: this.url,
                 callback: this.createTable,
@@ -122,7 +124,7 @@ Table.prototype = {
 
         columns.forEach(function(column, index) {
             array.push('<td>')
-            
+
             if (italic)
                 array.push('<i>')
             array.push(v[column])
@@ -138,9 +140,9 @@ Table.prototype = {
         var MongoClient = require('mongodb').MongoClient
             //var deferred = Q.defer()
         var that = this
-        console.log('in saveToDb')
+        //console.log('in saveToDb')
         MongoClient.connect(dbUrl, function(err, db) {
-            console.log("Connected to save table")
+            //console.log("Connected to save table")
 
             var collection = db.collection(collectionName)
 
@@ -154,7 +156,7 @@ Table.prototype = {
                     upsert: true
                 },
                 function(error, result) {
-                    //console.log('db error: ' + error)
+                    console.log('db error: ' + error)
                     db.close()
                     return result
                 })
@@ -165,8 +167,30 @@ Table.prototype = {
     createTable: function createTable(data) {
         var tableArray = [],
             count = 1
-        console.log('in createTable')
+        //console.log('in createTable')
+
+
+
         var that = this
+
+        if (this.sort) {
+            data.sort(function(a, b) {
+                var result =  b[that.sort] - a[that.sort]
+                if (!that.sort2 || result) {                 
+                    return result
+                }
+                else {
+                    result = b[that.sort2] - a[that.sort2]
+                    if (!that.sort3 || result) {
+                        return result
+                    } else {
+                        return b[that.sort3] - a[that.sort3]
+                    }
+
+                }
+            })
+        }
+
         data.forEach(function(v, index) {
             that.addToTable(tableArray, v, count++, that.columns, that.check)
         })
