@@ -16,6 +16,22 @@ var params = [{
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1fbaSXZ_pUMNRAi3UT4qysz5tl6ZDTIRwyTqvIzgEZTI&output=html',
 	columns: ['команда', 'город', 'синхрон'],
 	interval: 1500000
+},
+{
+	//чгк
+	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=11-JsYW-XRNdkFrqlWQ3c6RBGSMWllYWZE26iO4qiIFw&output=html',
+	columns: ['команда', 'сумма', 'первый', 'второй', 'третий', 'четвёртый', 'пятый', 'рейтинг'],
+	interval: 1500000,
+	sort: 'сумма',
+	sort2: 'рейтинг'
+},
+{
+	//своя игра
+	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1LsvBGl8ZgxDQIaHLcLpHqAxuHOmUG1PBTasB2YMsFAw&output=html',
+	columns: ['игрок', 'сумма', '50'],
+	interval: 1500000,
+	sort: 'сумма',
+	sort2: '50'
 }]
 
 function initializeTables() {
@@ -33,6 +49,7 @@ function loadTable(options) {
 
 	deferred.promise.then(function(t) {
 		tables[options.url] = t
+		console.log(tables[options.url])
 		t.init()
 	}).then(function(t) {
 
@@ -64,11 +81,14 @@ app.get('/:key', function(req, res) {
 		'&output=html'
 	//console.log(url)
 	//console.log(tables[0])
-	res.send(tables[url].table)
+	if (tables[url])
+		res.send(tables[url].table)
+	else
+		res.send('There\'s no table with this key')
 
 })
 
-var server = app.listen(80, function() {
+var server = app.listen(3000, function() {
 
 	var host = server.address().address
 	var port = server.address().port
