@@ -81,6 +81,7 @@ Table.prototype = {
                     //console.log(document)
                     if (document)
                         t = document.table
+                    if (error)
                         console.log('db error: ' + error)
                     db.close()
                     deferred.resolve(t)
@@ -156,7 +157,8 @@ Table.prototype = {
                     upsert: true
                 },
                 function(error, result) {
-                    console.log('db error: ' + error)
+                    if (error)
+                        console.log('db error: ' + error)
                     db.close()
                     return result
                 })
