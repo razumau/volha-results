@@ -15,7 +15,7 @@ var params = [{
 	//schoolList
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1fbaSXZ_pUMNRAi3UT4qysz5tl6ZDTIRwyTqvIzgEZTI&output=html',
 	columns: ['команда', 'город', 'синхрон'],
-	sort: 'синхрон'
+	sort: 'синхрон',
 	interval: 600000
 },
 {
