@@ -10,18 +10,19 @@ var params = [{
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1_mNN7NPsxEUaDuH_j6SN4KZLvYXQeLWXiWKZCW_y2c8&output=html',
 	columns: ['команда', 'город'],
 	check: 'эк',
-	interval: 600000
+	interval: 60000000
 }, {
 	//schoolList
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1fbaSXZ_pUMNRAi3UT4qysz5tl6ZDTIRwyTqvIzgEZTI&output=html',
 	columns: ['команда', 'город', 'синхрон'],
-	interval: 1500000
+	sort: 'синхрон'
+	interval: 600000
 },
 {
 	//чгк
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=11-JsYW-XRNdkFrqlWQ3c6RBGSMWllYWZE26iO4qiIFw&output=html',
 	columns: ['команда', 'сумма', 'первый', 'второй', 'третий', 'четвёртый', 'пятый'],
-	interval: 120000,
+	interval: 12000000,
 	sort: 'сумма',
 	sort2: 'рейтинг'
 },
@@ -29,7 +30,7 @@ var params = [{
 	//своя игра
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1LsvBGl8ZgxDQIaHLcLpHqAxuHOmUG1PBTasB2YMsFAw&output=html',
 	columns: ['игрок', 'сумма'],
-	interval: 120000,
+	interval: 12000000,
 	sort: 'сумма',
 	sort2: 'пятьдесят',
 	sort3: 'сорок'
