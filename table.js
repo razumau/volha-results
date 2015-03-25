@@ -14,6 +14,7 @@ var Table = function(settings) {
     this.sort = settings.sort
     this.sort2 = settings.sort2
     this.sort3 = settings.sort3
+    this.order = settings.order
     this.interval = settings.interval
     this.table = ''
     this.deferredForTabletop // = Q.defer()
@@ -178,6 +179,8 @@ Table.prototype = {
         if (this.sort) {
             data.sort(function(a, b) {
                 var result =  b[that.sort] - a[that.sort]
+                if (that.order)
+                    result *= that.order
                 if (!that.sort2 || result) {                 
                     return result
                 }
