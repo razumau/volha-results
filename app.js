@@ -32,7 +32,7 @@ var params = [{
 	//школьное чгк
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1ER82RT50Rufw558V-1Fu2txtlpjrNIGwuw_jsWmhWG4&output=html',
 	columns: ['команда', 'сумма', 'первый', 'второй', 'третий', 'четвёртый', 'пятый'],
-	interval: 120000,
+	interval: 30000,
 	sort: 'сумма',
 	sort2: 'рейтинг'
 },
@@ -40,7 +40,7 @@ var params = [{
 	//школьная своя игра
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=19XZhJjgbKue4HYan7LGVrCd7l98tvE9EID3PrN98wuk&output=html',
 	columns: ['команда', 'сумма'],
-	interval: 120000,
+	interval: 3000000,
 	sort: 'сумма',
 	sort2: 'пятьдесят',
 	sort3: 'сорок'
