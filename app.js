@@ -5,7 +5,7 @@ var express = require('express'),
 	tables = {}
 
 
-var params = [{
+var params = [/*{
 	//studentList
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1_mNN7NPsxEUaDuH_j6SN4KZLvYXQeLWXiWKZCW_y2c8&output=html',
 	columns: ['команда', 'город'],
@@ -44,6 +44,15 @@ var params = [{
 	sort: 'сумма',
 	sort2: 'пятьдесят',
 	sort3: 'сорок'
+}*/
+{
+	//adults
+	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1cdG4pTZjv5cunthzsKfSHj9NsIOAwJVNRA4MWuEjIIw&output=html',
+	columns: ['команда', 'город'],
+	//sort: 'рейтинг-б',
+	//order: -1,
+	sheet: '2015',
+	interval: 216000000 //once an hour
 }
 ]
 
@@ -62,7 +71,7 @@ function loadTable(options) {
 
 	deferred.promise.then(function(t) {
 		tables[options.url] = t
-		console.log(tables[options.url])
+		//console.log(tables[options.url])
 		t.init()
 	}).then(function(t) {
 
@@ -101,7 +110,7 @@ app.get('/:key', function(req, res) {
 
 })
 
-var server = app.listen(80, function() {
+var server = app.listen(3000, function() {
 
 	var host = server.address().address
 	var port = server.address().port

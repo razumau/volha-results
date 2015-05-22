@@ -1,4 +1,4 @@
-var collectionName = 'results_test5',
+var collectionName = 'results_new',
     dbUrl = 'mongodb://localhost:27017/results',
     Q = require('q')
 
@@ -15,6 +15,7 @@ var Table = function(settings) {
     this.sort2 = settings.sort2
     this.sort3 = settings.sort3
     this.order = settings.order
+    this.sheet = settings.sheet
     this.interval = settings.interval
     this.table = ''
     this.deferredForTabletop // = Q.defer()
@@ -95,13 +96,13 @@ Table.prototype = {
 
     runTabletop: function runTabletop() {
         var Tabletop = require('tabletop')
-
         try {
-            //console.log('starting tabletop now')
+            console.log('starting tabletop now')
             Tabletop.init({
                 key: this.url,
                 callback: this.createTable,
-                simpleSheet: true,
+                simpleSheet: !this.sheet,
+                wanted: [this.sheet],
                 callbackContext: this
             })
         } catch (error) {
@@ -114,9 +115,14 @@ Table.prototype = {
         var isEmpty = false
         var italic = check && (!v[check] || v[check] === '')
 
+        console.log(columns);
+
         columns.forEach(function isRowEmpty(column, index) {
-            isEmpty = (v[column] == '' || v[column] == ' ')
+            console.log(v[column])
+            isEmpty = (v[column] === '' || v[column] === ' ')
         })
+
+        console.log(v)
 
         if (isEmpty) return
 
@@ -167,10 +173,13 @@ Table.prototype = {
         })
     },
 
-    createTable: function createTable(data) {
+    createTable: function createTable(data, tabletop) {
         var tableArray = [],
             count = 1
-        //console.log('in createTable')
+
+        if (!tabletop.simpleSheet) {
+            data = tabletop.sheets(this.sheet).all()
+        }
 
 
 
@@ -195,6 +204,7 @@ Table.prototype = {
                 }
             })
         }
+
 
         data.forEach(function(v, index) {
             that.addToTable(tableArray, v, count++, that.columns, that.check)
