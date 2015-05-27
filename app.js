@@ -3,7 +3,20 @@ var express = require('express'),
 	table = require('./table.js'),
 	Q = require('q'),
 	tables = {}
+var https = require('https')
+var http = require('http')
+var fs = require('fs')
 
+var options = {
+  key: fs.readFileSync('./razumau-private-de.key'),
+  cert: fs.readFileSync('./unified.crt')
+};
+
+var app = express()
+
+http.createServer(app).listen(80)
+
+https.createServer(options, app).listen(443)
 
 var params = [/*{
 	//studentList
@@ -52,7 +65,7 @@ var params = [/*{
 	//sort: 'рейтинг-б',
 	//order: -1,
 	sheet: '2015',
-	interval: 216000000 //once an hour
+	interval: 3600000 //once an hour
 }
 ]
 
@@ -107,14 +120,5 @@ app.get('/:key', function(req, res) {
 		res.send(tables[url].table)
 	else
 		res.send('There\'s no table with this key')
-
-})
-
-var server = app.listen(3000, function() {
-
-	var host = server.address().address
-	var port = server.address().port
-
-	console.log('listening at http://%s:%s', host, port)
 
 })
