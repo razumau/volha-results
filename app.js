@@ -63,8 +63,10 @@ var params = [/*{
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1cdG4pTZjv5cunthzsKfSHj9NsIOAwJVNRA4MWuEjIIw&output=html',
 	columns: ['команда', 'город'],
 	//sort: 'рейтинг-б',
-	//order: -1,
+	order: -1,
 	sheet: '2015',
+	fetchRating: true, 
+	release: 1160,
 	interval: 3600000 //once an hour
 }
 ]

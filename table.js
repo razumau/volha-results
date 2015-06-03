@@ -1,6 +1,7 @@
 var collectionName = 'results_new',
     dbUrl = 'mongodb://localhost:27017/results',
-    Q = require('q')
+    Q = require('q'),
+    request = require('request')
 
 var Table = function(settings) {
 
@@ -16,6 +17,8 @@ var Table = function(settings) {
     this.sort3 = settings.sort3
     this.order = settings.order
     this.sheet = settings.sheet
+    this.fetchRating = settings.fetchRating
+    this.release = settings.release
     this.interval = settings.interval
     this.table = ''
     this.deferredForTabletop // = Q.defer()
@@ -115,16 +118,13 @@ Table.prototype = {
         var isEmpty = false
         var italic = check && (!v[check] || v[check] === '')
 
-        console.log(columns);
-
         columns.forEach(function isRowEmpty(column, index) {
-            console.log(v[column])
             isEmpty = (v[column] === '' || v[column] === ' ')
         })
 
-        console.log(v)
-
-        if (isEmpty) return
+        if (isEmpty) {
+            return
+        }
 
         array.push('<tr><td>')
         array.push((number).toString())
@@ -174,16 +174,62 @@ Table.prototype = {
     },
 
     createTable: function createTable(data, tabletop) {
-        var tableArray = [],
-            count = 1
 
         if (!tabletop.simpleSheet) {
             data = tabletop.sheets(this.sheet).all()
         }
 
+        if (this.fetchRating) {
+            this.sort = 'рейтинг'
+            this.columns.push('рейтинг')
+            var that = this
+            //console.log(this)
+            data.forEach(function (v, index) {
+                //console.log(index);
+                request('http://rating.chgk.info/api/teams/'
+                            + v.id
+                            + '/rating/' 
+                            + that.release 
+                            + '.json',
+                         function (error, response, body) {
+                             body = JSON.parse(body)
+                                //console.log(body)
+                                //console.log(body.formula);
+                             v['рейтинг'] = parseInt(body.rating_position)
+                            /*if (!error && response.statusCode === 200) {
+                               
+                            } else {
+                                console.log(error, response)
+                            }*/
 
+                            if (index === data.length - 1) {
+                                console.log(v, index)
+                               //console.log(this)
+                               that.sortAndPush(data)
+                           }
+
+                         })
+                
+            })
+        } else {
+            this.sortAndPush(data)
+        }
+
+
+
+        
+    },
+
+    sortAndPush: function (data) {
+
+        var tableArray = [],
+            count = 1
 
         var that = this
+
+        //console.log(this)
+
+        console.log(this.sort);
 
         if (this.sort) {
             data.sort(function(a, b) {
@@ -205,7 +251,7 @@ Table.prototype = {
             })
         }
 
-
+        console.log(data);
         data.forEach(function(v, index) {
             that.addToTable(tableArray, v, count++, that.columns, that.check)
         })
