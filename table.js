@@ -180,37 +180,41 @@ Table.prototype = {
         }
 
         if (this.fetchRating) {
+
             this.sort = 'рейтинг'
-            this.columns.push('рейтинг')
+
+            if (this.columns.indexOf['рейтинг'] === -1) {
+                this.columns.push('рейтинг')
+            }
+
             var that = this
-            //console.log(this)
+
             data.forEach(function (v, index) {
-                //console.log(index);
-                request('http://rating.chgk.info/api/teams/'
-                            + v.id
-                            + '/rating/' 
-                            + that.release 
-                            + '.json',
-                         function (error, response, body) {
-                             body = JSON.parse(body)
-                                //console.log(body)
-                                //console.log(body.formula);
-                             v['рейтинг'] = parseInt(body.rating_position)
-                            /*if (!error && response.statusCode === 200) {
-                               
-                            } else {
-                                console.log(error, response)
-                            }*/
 
-                            if (index === data.length - 1) {
-                                console.log(v, index)
-                               //console.log(this)
-                               that.sortAndPush(data)
-                           }
+                if (!v['рейтинг']) {
 
-                         })
-                
-            })
+                    request('http://rating.chgk.info/api/teams/'
+                                + v.id
+                                + '/rating/' 
+                                + that.release 
+                                + '.json',
+                             function (error, response, body) {
+
+                                body = JSON.parse(body)
+                                v['рейтинг'] = parseInt(body.rating_position)
+
+                                if (isNan(v['рейтинг'])) {
+                                    v['рейтинг'] = 9999
+                                }
+
+                                if (index === data.length - 1) {
+                                    that.sortAndPush(data)
+                                }
+
+                             })
+                    }
+
+                })
         } else {
             this.sortAndPush(data)
         }
