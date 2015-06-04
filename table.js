@@ -203,7 +203,7 @@ Table.prototype = {
                                 body = JSON.parse(body)
                                 v['рейтинг'] = parseInt(body.rating_position)
 
-                                if (isNan(v['рейтинг'])) {
+                                if (isNaN(v['рейтинг'])) {
                                     v['рейтинг'] = 9999
                                 }
 
