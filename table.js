@@ -183,7 +183,7 @@ Table.prototype = {
 
             this.sort = 'рейтинг'
 
-            if (this.columns.indexOf['рейтинг'] === -1) {
+            if (this.columns.indexOf('рейтинг') === -1) {
                 this.columns.push('рейтинг')
             }
 
