@@ -182,7 +182,7 @@ Table.prototype = {
             var that = this
             var fetchedRatings = 0
 
-            console.log(new Date() + 'fetching ratings')
+            console.log(new Date() + ' fetching ratings')
 
             data.forEach(function (v, index) {
 
