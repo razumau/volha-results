@@ -62,11 +62,10 @@ var params = [/*{
 	//adults
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1cdG4pTZjv5cunthzsKfSHj9NsIOAwJVNRA4MWuEjIIw&output=html',
 	columns: ['команда', 'город'],
-	//sort: 'рейтинг-б',
 	order: -1,
 	sheet: '2015',
 	fetchRating: true, 
-	release: 1160,
+	release: 1164,
 	interval: 3600000 //once an hour
 }
 ]
@@ -86,7 +85,6 @@ function loadTable(options) {
 
 	deferred.promise.then(function(t) {
 		tables[options.url] = t
-		//console.log(tables[options.url])
 		t.init()
 	}).then(function(t) {
 
@@ -111,13 +109,11 @@ app.all('/*', function(req, res, next) {
 })
 
 app.get('/:key', function(req, res) {
-	console.log(req.params.key)
-	//res.send(req.toString())
+	console.log(new Date(), req.params.key)
+	
 	var url = 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=' + 
 		req.params.key + 
 		'&output=html'
-	//console.log(url)
-	//console.log(tables[0])
 	if (tables[url])
 		res.send(tables[url].table)
 	else

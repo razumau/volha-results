@@ -53,15 +53,10 @@ Table.prototype = {
         if (typeof t === 'undefined')
             t = this.table
 
-        //if (!that.table || that.table == '') {
-
-        //console.log('running tabletop')
         this.runTabletop()
-
         var that = this
 
         this.deferredForTabletop.promise.then(function(table) {
-
             return that.saveToDb()
         })
 
@@ -75,19 +70,18 @@ Table.prototype = {
             t = null,
             url = this.url
         MongoClient.connect(dbUrl, function(err, db) {
-            //assert.equal(null, err)
-            //console.log("Connected to read table")
+
             var collection = db.collection(collectionName)
 
             var d = collection.findOne({
                     "url": url,
                 },
                 function(error, document) {
-                    //console.log(document)
+                    
                     if (document)
                         t = document.table
                     if (error)
-                        console.log('db error: ' + error)
+                        console.log(new Date() + ' db error: ' + error)
                     db.close()
                     deferred.resolve(t)
 
@@ -100,7 +94,7 @@ Table.prototype = {
     runTabletop: function runTabletop() {
         var Tabletop = require('tabletop')
         try {
-            console.log('starting tabletop now')
+            console.log(new Date() + ' starting tabletop')
             Tabletop.init({
                 key: this.url,
                 callback: this.createTable,
@@ -145,15 +139,13 @@ Table.prototype = {
     },
 
     saveToDb: function saveToDb() {
-        var MongoClient = require('mongodb').MongoClient
-            //var deferred = Q.defer()
-        var that = this
-        //console.log('in saveToDb')
+        var MongoClient = require('mongodb').MongoClient,
+            that = this
+
         MongoClient.connect(dbUrl, function(err, db) {
-            //console.log("Connected to save table")
 
             var collection = db.collection(collectionName)
-
+            console.log(new Date() + ' saving to db')
             collection.update({
                     url: that.url
                 }, {
@@ -188,6 +180,9 @@ Table.prototype = {
             }
 
             var that = this
+            var fetchedRatings = 0
+
+            console.log(new Date() + 'fetching ratings')
 
             data.forEach(function (v, index) {
 
@@ -207,43 +202,34 @@ Table.prototype = {
                                     v['рейтинг'] = 9999
                                 }
 
-                                if (index === data.length - 1) {
+                                fetchedRatings++
+
+                                if (fetchedRatings === data.length - 1) {
                                     that.sortAndPush(data)
                                 }
-
                              })
                     }
-
                 })
         } else {
             this.sortAndPush(data)
         }
-
-
-
-        
     },
 
     sortAndPush: function (data) {
 
         var tableArray = [],
-            count = 1
-
-        var that = this
-
-        //console.log(this)
-
-        console.log(this.sort);
+            count = 1,
+            that = this
 
         if (this.sort) {
+            console.log(new Date() + ' sorting');
             data.sort(function(a, b) {
                 var result =  b[that.sort] - a[that.sort]
                 if (that.order)
                     result *= that.order
                 if (!that.sort2 || result) {                 
                     return result
-                }
-                else {
+                } else {
                     result = b[that.sort2] - a[that.sort2]
                     if (!that.sort3 || result) {
                         return result
@@ -255,7 +241,6 @@ Table.prototype = {
             })
         }
 
-        console.log(data);
         data.forEach(function(v, index) {
             that.addToTable(tableArray, v, count++, that.columns, that.check)
         })
