@@ -188,7 +188,6 @@ Table.prototype = {
             }
 
             var that = this
-            var fetchedRatings = 0
 
             data.forEach(function (v, index) {
 
@@ -208,9 +207,7 @@ Table.prototype = {
                                     v['рейтинг'] = 9999
                                 }
 
-                                fetchedRatings++
-
-                                if (fetchedRatings === data.length) {
+                                if (index === data.length - 1) {
                                     that.sortAndPush(data)
                                 }
 
