@@ -204,14 +204,14 @@ Table.prototype = {
 
                                 fetchedRatings++
 
-                                if (fetchedRatings === data.length - 1) {
+                                if (fetchedRatings === data.length) {
                                     that.sortAndPush(data)
                                 }
                              })
                     } else {
                         fetchedRatings++
 
-                        if (fetchedRatings === data.length - 1) {
+                        if (fetchedRatings === data.length) {
                                     that.sortAndPush(data)
                         }
                     }
