@@ -208,6 +208,11 @@ Table.prototype = {
                                     that.sortAndPush(data)
                                 }
                              })
+                    } else {
+                        fetchedRatings++
+
+                        if (fetchedRatings === data.length - 1) {
+                                    that.sortAndPush(data)
                     }
                 })
         } else {
@@ -222,7 +227,9 @@ Table.prototype = {
             that = this
 
         if (this.sort) {
-            console.log(new Date() + ' sorting');
+
+            console.log(new Date() + ' sorting')
+            
             data.sort(function(a, b) {
                 var result =  b[that.sort] - a[that.sort]
                 if (that.order)
