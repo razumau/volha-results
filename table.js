@@ -213,6 +213,7 @@ Table.prototype = {
 
                         if (fetchedRatings === data.length - 1) {
                                     that.sortAndPush(data)
+                        }
                     }
                 })
         } else {
