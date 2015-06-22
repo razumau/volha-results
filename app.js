@@ -64,6 +64,7 @@ var params = [/*{
 	columns: ['команда', 'город'],
 	order: -1,
 	sheet: '2015',
+	check: 'подтверждение',
 	fetchRating: true, 
 	release: 1164,
 	interval: 3600000 //once an hour

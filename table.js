@@ -188,6 +188,8 @@ Table.prototype = {
 
                 if (!v['рейтинг']) {
 
+                    
+
                     request('http://rating.chgk.info/api/teams/'
                                 + v.id
                                 + '/rating/' 
