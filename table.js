@@ -1,7 +1,8 @@
 var collectionName = 'results_new',
     dbUrl = 'mongodb://localhost:27017/results',
     Q = require('q'),
-    request = require('request')
+    request = require('request'),
+    log = require('./logger.js')
 
 var Table = function(settings) {
 
@@ -81,7 +82,7 @@ Table.prototype = {
                     if (document)
                         t = document.table
                     if (error)
-                        console.log(new Date() + ' db error: ' + error)
+                        log.debug('db error: ' + error)
                     db.close()
                     deferred.resolve(t)
 
@@ -94,7 +95,7 @@ Table.prototype = {
     runTabletop: function runTabletop() {
         var Tabletop = require('tabletop')
         try {
-            console.log(new Date() + ' starting tabletop')
+            log.debug('starting tabletop')
             Tabletop.init({
                 key: this.url,
                 callback: this.createTable,
@@ -103,7 +104,7 @@ Table.prototype = {
                 callbackContext: this
             })
         } catch (error) {
-            console.log(error)
+            log.debug(error)
         }
     },
 
@@ -145,7 +146,7 @@ Table.prototype = {
         MongoClient.connect(dbUrl, function(err, db) {
 
             var collection = db.collection(collectionName)
-            console.log(new Date() + ' saving to db')
+            log.debug('saving to db')
             collection.update({
                     url: that.url
                 }, {
@@ -157,7 +158,7 @@ Table.prototype = {
                 },
                 function(error, result) {
                     if (error)
-                        console.log('db error: ' + error)
+                        log.debug('db error: ' + error)
                     db.close()
                     return result
                 })
@@ -167,12 +168,11 @@ Table.prototype = {
 
     createTable: function createTable(data, tabletop) {
 
-        console.log('asdf');
         if (!tabletop.simpleSheet) {
             data = tabletop.sheets(this.sheet).all()
         }
 
-        console.log(this.fetchRatings);
+       log.debug(this.fetchRatings);
 
         if (this.fetchRating) {
 
@@ -185,7 +185,7 @@ Table.prototype = {
             var that = this
             var fetchedRatings = 0
 
-            console.log(new Date() + ' fetching ratings')
+            log.debug('fetching ratings')
 
             data.forEach(function (v, index) {
 
@@ -222,7 +222,7 @@ Table.prototype = {
                     }
                 })
         } else {
-            console.log(new Date() + 'not fetching ratings');
+            log.debug('not fetching ratings');
             this.sortAndPush(data)
         }
     },
@@ -235,7 +235,7 @@ Table.prototype = {
 
         if (this.sort) {
 
-            console.log(new Date() + ' sorting')
+            log.debug('sorting')
             
             data.sort(function(a, b) {
                 var result =  b[that.sort] - a[that.sort]

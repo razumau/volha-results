@@ -1,11 +1,12 @@
 var express = require('express'),
 	app = express(),
-	table = require('./table.js'),
 	Q = require('q'),
 	tables = {}
 var https = require('https')
 var http = require('http')
 var fs = require('fs')
+var logger = require('./logger.js')
+var table = require('./table.js')
 
 var options = {
   key: fs.readFileSync('./razumau-private-de.key'),
@@ -18,7 +19,8 @@ http.createServer(app).listen(80)
 
 https.createServer(options, app).listen(443)
 
-var params = [/*{
+var params = [
+/*{
 	//studentList
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1_mNN7NPsxEUaDuH_j6SN4KZLvYXQeLWXiWKZCW_y2c8&output=html',
 	columns: ['команда', 'город'],
@@ -119,7 +121,7 @@ app.all('/*', function(req, res, next) {
 })
 
 app.get('/:key', function(req, res) {
-	console.log(new Date(), req.params.key)
+	logger.info(req.params.key)
 	
 	var url = 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=' + 
 		req.params.key + 
