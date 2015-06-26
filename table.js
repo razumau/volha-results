@@ -167,9 +167,12 @@ Table.prototype = {
 
     createTable: function createTable(data, tabletop) {
 
+        console.log('asdf');
         if (!tabletop.simpleSheet) {
             data = tabletop.sheets(this.sheet).all()
         }
+
+        console.log(this.fetchRatings);
 
         if (this.fetchRating) {
 
@@ -219,6 +222,7 @@ Table.prototype = {
                     }
                 })
         } else {
+            console.log(new Date() + 'not fetching ratings');
             this.sortAndPush(data)
         }
     },
