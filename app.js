@@ -75,7 +75,7 @@ var params = [
 	//чгк на взрослой ольге 2015
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1FLf01X-2YTnV9EWdewOKrZ5E2ztdmvy2b8MvbcxXePA&output=html',
 	columns: ['команда', 'сумма', 'первый', 'второй', 'третий', 'четвёртый', 'пятый'],
-	interval: 120000,
+	interval: 60000,
 	sort: 'сумма',
 	sheet: 'Итог',
 	sort2: 'рейтинг'
