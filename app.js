@@ -69,13 +69,13 @@ var params = [
 	check: 'подтверждение',
 	fetchRating: true, 
 	release: 1164,
-	interval: 3600000 //once an hour
+	interval: 360000000 //once a 100 hours
 },
 {
 	//чгк на взрослой ольге 2015
 	url: 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1FLf01X-2YTnV9EWdewOKrZ5E2ztdmvy2b8MvbcxXePA&output=html',
 	columns: ['команда', 'сумма', 'первый', 'второй', 'третий', 'четвёртый', 'пятый'],
-	interval: 60000,
+	interval: 360000000, //once a 100 hours
 	sort: 'сумма',
 	sheet: 'Итог',
 	sort2: 'рейтинг'
