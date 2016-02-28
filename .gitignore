@@ -1,9 +1,10 @@
 db/*
 results.sublime*
 node_modules/*
-
 razumau-private-de.key
-
 unified.crt
-
 *.log
+.idea/*
+credentials.json
+
+*.pyc
