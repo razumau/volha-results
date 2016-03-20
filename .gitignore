@@ -8,3 +8,5 @@ unified.crt
 credentials.json
 
 *.pyc
+
+.idea/workspace.xml

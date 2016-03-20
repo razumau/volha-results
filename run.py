@@ -1,5 +1,7 @@
 import asyncio
 import json
+from aiohttp import web
+from functools import partial
 
 import gspread as gs
 import sqlalchemy as sa
@@ -28,14 +30,24 @@ async def get_tables(gspread):
     return result
 
 
+async def update_tables(list_of_tables):
+    for _, t in list_of_tables.items():
+        await t.update_table()
+
+
+async def get_html_table(request, list_of_tables=None):
+    return web.Response(text=await list_of_tables[request.match_info['table_url']].get_html_table())
+
+
 def main():
     loop = asyncio.get_event_loop()
 
-    _tables = loop.run_until_complete(get_tables(init_gspread()))
-    for url, _table in _tables.items():
-        _table.update_table()
+    list_of_tables = loop.run_until_complete(get_tables(init_gspread()))
+    loop.run_until_complete(update_tables(list_of_tables))
 
-        # TODO: start server
+    app = web.Application()
+    app.router.add_route('GET', '/table/{table_url}', partial(get_html_table, list_of_tables=list_of_tables))
+    web.run_app(app)
 
 
 if __name__ == '__main__':

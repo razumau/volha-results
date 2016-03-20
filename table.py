@@ -36,7 +36,7 @@ class Table:
         self.try_to_split('columns_to_extract')
         # self.columns_to_extract = self.settings['columns_to_extract'].split(' ')
         self.columns_to_display = self.settings['columns_to_display'].split(' ')
-        self.sort_by = self.settings['sort_by'].split(' ')
+        self.sort_by = self.settings['sort_by'].split(' ') if self.settings['sort_by'] is not None else []
         self.sort_asc = self.settings['sort_asc']
         self.check = self.settings['check_column'] if self.settings['check_column'] else []
         self.gspread = gspread
@@ -51,7 +51,7 @@ class Table:
         except AttributeError:
             setattr(self, column, None)
 
-    def update_table(self):
+    async def update_table(self):
         raw = self.get_spreadsheet()
         if self.settings['rating_release']:
             self.add_rating(raw)
@@ -77,6 +77,7 @@ class Table:
         for key, order in zip(self.sort_by, self.sort_asc):
             records.sort(key=itemgetter(key), reverse=order)
 
+        records = self.filter_dict(records, self.columns_to_display)
         records = enumerate(records, start=1)
         result = map(self.build_row, records)
         return ''.join(result)
