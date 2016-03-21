@@ -1,7 +1,6 @@
 import asyncio
 import json
 from aiohttp import web
-from functools import partial
 
 import gspread as gs
 import sqlalchemy as sa
