@@ -6,7 +6,4 @@ unified.crt
 *.log
 .idea/*
 credentials.json
-
 *.pyc
-
-.idea/workspace.xml

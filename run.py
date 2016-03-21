@@ -35,8 +35,9 @@ async def update_tables(list_of_tables):
         await t.update_table()
 
 
-async def get_html_table(request, list_of_tables=None):
-    return web.Response(text=await list_of_tables[request.match_info['table_url']].get_html_table())
+async def get_html_table(request):
+    requested_table = request.app['list_of_tables'][request.match_info['table_url']]
+    return web.Response(text=await requested_table.get_html_table())
 
 
 def main():
@@ -46,7 +47,8 @@ def main():
     loop.run_until_complete(update_tables(list_of_tables))
 
     app = web.Application()
-    app.router.add_route('GET', '/table/{table_url}', partial(get_html_table, list_of_tables=list_of_tables))
+    app['list_of_tables'] = list_of_tables
+    app.router.add_route('GET', '/table/{table_url}', get_html_table)
     web.run_app(app)
 
 
