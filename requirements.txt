@@ -3,4 +3,3 @@ aiohttp==0.21.2
 oauth2client==1.5.2
 gspread==0.3.0
 sqlalchemy==1.0.9
-pyopenssl==0.15.1

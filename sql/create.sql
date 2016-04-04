@@ -6,7 +6,7 @@ sheet text,
 columns_to_extract text,
 columns_to_display text,
 sort_by text,
-sort_asc boolean,
+sort_asc boolean[],
 rating_release integer,
 check_column text
 )
