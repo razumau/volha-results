@@ -1,9 +1,9 @@
 import asyncio
 import json
-from aiohttp import web
 
 import gspread as gs
 import sqlalchemy as sa
+from aiohttp import web
 from aiopg.sa import create_engine
 from oauth2client.client import SignedJwtAssertionCredentials
 
@@ -20,7 +20,9 @@ def init_gspread():
 
 async def get_tables(gspread):
     result = {}
-    engine = await create_engine(host='127.0.0.1', database='volha')
+    credentials = json.load(open('credentials.json'))
+    engine = await create_engine(host='127.0.0.1', database='volha', user='admin',
+                                 password=credentials['postgres_password'])
     async with engine:
         async with engine.acquire() as conn:
             query = sa.select('*', ).select_from(configs)
