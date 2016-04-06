@@ -53,7 +53,9 @@ def main():
     sslcontext.load_cert_chain('unified.crt', 'private.key')
     app = web.Application()
     app['list_of_tables'] = list_of_tables
-    app.router.add_route('GET', '/table/{table_url}', get_html_table, {
+    cors = aiohttp_cors.setup(app)
+    resource = cors.add(app.router.add_resource("/table/{table_url}"))
+    cors.add(resource.add_route('GET', get_html_table), {
         "*": aiohttp_cors.ResourceOptions()
     })
     web.run_app(app, ssl_context=sslcontext)

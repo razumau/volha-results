@@ -1,7 +1,7 @@
 db/*
 results.sublime*
 node_modules/*
-razumau-private-de.key
+*.key
 unified.crt
 *.log
 .idea/*
