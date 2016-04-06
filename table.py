@@ -34,7 +34,7 @@ class Table:
         # TODO read from postgres
         self.settings = settings
         self.try_to_split('columns_to_extract')
-        # self.columns_to_extract = self.settings['columns_to_extract'].split(' ')
+        self.columns_to_extract = self.settings['columns_to_extract'].split(' ')
         self.columns_to_display = self.settings['columns_to_display'].split(' ')
         self.sort_by = self.settings['sort_by'].split(' ') if self.settings['sort_by'] is not None else []
         self.sort_asc = self.settings['sort_asc']
@@ -84,7 +84,8 @@ class Table:
 
     def build_row(self, record):
         number, row = record
-        result = ['<tr>', self.build_cell(number), ''.join(map(self.build_cell, row.values())), '</tr>']
+        values = [row[column] for column in self.columns_to_display]
+        result = ['<tr>', self.build_cell(number), ''.join(map(self.build_cell, values)), '</tr>']
         return ''.join(result)
 
     @add_italic
