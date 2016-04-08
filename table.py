@@ -1,3 +1,7 @@
+import sched
+import time
+scheduler = sched.scheduler(time.time, time.sleep)
+
 import aiopg
 import aiohttp
 from aiopg.sa import create_engine
@@ -34,7 +38,8 @@ class Table:
         # TODO read from postgres
         self.settings = settings
         self.try_to_split('columns_to_extract')
-        self.columns_to_extract = self.settings['columns_to_extract'].split(' ')
+        self.interval = self.settings['interval']
+        # self.columns_to_extract = self.settings['columns_to_extract'].split(' ')
         self.columns_to_display = self.settings['columns_to_display'].split(' ')
         self.sort_by = self.settings['sort_by'].split(' ') if self.settings['sort_by'] is not None else []
         self.sort_asc = self.settings['sort_asc']
@@ -56,6 +61,9 @@ class Table:
         if self.settings['rating_release']:
             self.add_rating(raw)
         self.table = self.build_html_table(raw)
+        if self.interval is not None:
+            scheduler.enter(self.interval * 60, 1, self.update_table)
+            scheduler.run()
         # await self.save_to_db()
         return self.table
 
