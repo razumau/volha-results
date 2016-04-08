@@ -78,9 +78,16 @@ class Table:
         for team in raw_table:
             team['рейтинг'] = team['id']
 
+    @staticmethod
+    def key_to_number(key):
+        def result(item):
+            return item[key] if item[key] != '' else 0
+
+        return result
+
     def build_html_table(self, records):
         for key, order in zip(self.sort_by, self.sort_asc):
-            records.sort(key=itemgetter(key), reverse=order)
+            records.sort(key=self.key_to_number(key), reverse=order)
 
         records = self.filter_dict(records, self.columns_to_display)
         records = enumerate(records, start=1)
