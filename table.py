@@ -55,12 +55,9 @@ class Table:
 
     async def update_table(self):
         raw = await self.get_spreadsheet()
-        if self.settings['rating_release']:
-            self.add_rating(raw)
         self.table = self.build_html_table(raw)
         if self.interval is not None:
-            scheduler.add_job(self.update_table, args=(self,), 'interval', minutes=self.interval)
-        # await self.save_to_db()
+            scheduler.add_job(self.update_table, trigger='interval', args=(self,),  minutes=self.interval)
         return self.table
 
     async def get_spreadsheet(self):
