@@ -69,7 +69,7 @@ class Table:
             records = spreadsheet.worksheet(self.settings['sheet']).get_all_records()
         else:
             records = spreadsheet.sheet1.get_all_records()
-        records = {k.lower(): v for k, v in records.items()}
+        records = [{k.lower(): v for k, v in _dict.items()} for _dict in records]
         return self.filter_dict(records, self.columns_to_extract + self.sort_by + self.check)
 
     @staticmethod
