@@ -1,14 +1,11 @@
-import sched
-import time
-scheduler = sched.scheduler(time.time, time.sleep)
-
 import aiopg
 import aiohttp
 from aiopg.sa import create_engine
 import sqlalchemy as sa
 from operator import attrgetter, itemgetter
 from functools import wraps
-
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+scheduler = AsyncIOScheduler()
 
 def add_italic(func):
         @wraps(func)
@@ -57,17 +54,16 @@ class Table:
             setattr(self, column, None)
 
     async def update_table(self):
-        raw = self.get_spreadsheet()
+        raw = await self.get_spreadsheet()
         if self.settings['rating_release']:
             self.add_rating(raw)
         self.table = self.build_html_table(raw)
         if self.interval is not None:
-            scheduler.enter(self.interval * 60, 1, self.update_table)
-            scheduler.run()
+            scheduler.add_job(self.update_table, 'interval', minutes=self.interval)
         # await self.save_to_db()
         return self.table
 
-    def get_spreadsheet(self):
+    async def get_spreadsheet(self):
         spreadsheet = self.gspread.open_by_key(self.settings['url'])
         if self.settings['sheet']:
             records = spreadsheet.worksheet(self.settings['sheet']).get_all_records()
