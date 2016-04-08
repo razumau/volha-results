@@ -59,7 +59,7 @@ class Table:
             self.add_rating(raw)
         self.table = self.build_html_table(raw)
         if self.interval is not None:
-            scheduler.add_job(self.update_table, 'interval', minutes=self.interval)
+            scheduler.add_job(self.update_table, args=(self,), 'interval', minutes=self.interval)
         # await self.save_to_db()
         return self.table
 
