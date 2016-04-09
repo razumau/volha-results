@@ -1,18 +1,16 @@
-import aiopg
-import aiohttp
-from aiopg.sa import create_engine
-import sqlalchemy as sa
-from operator import attrgetter, itemgetter
 from functools import wraps
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-scheduler = AsyncIOScheduler()
+
+import sqlalchemy as sa
+
 
 def add_italic(func):
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            result = func(self, *args, **kwargs)
-            return '<i>' + result + '</i>' if self.check else result
-        return wrapper
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        result = func(self, *args, **kwargs)
+        return '<i>' + result + '</i>' if self.check else result
+
+    return wrapper
+
 
 metadata = sa.MetaData()
 configs = sa.Table('tables', metadata,
@@ -58,8 +56,6 @@ class Table:
         if self.table:
             print('updating table {}'.format(self.table[:20]))
         self.table = self.build_html_table(raw)
-        if self.interval is not None:
-            scheduler.add_job(self.update_table, trigger='interval', minutes=self.interval)
         return self.table
 
     async def get_spreadsheet(self):
@@ -110,11 +106,9 @@ class Table:
     def filter_dict(list_of_dicts, fields):
         return [{k: v for (k, v) in _dict.items() if k in fields} for _dict in list_of_dicts]
 
-    # @classmethod
-    # async def create(cls, settings):
-    #     self = Table()
-    #     self.settings = settings
-    #     print(settings)
-    #     return self
-
-
+        # @classmethod
+        # async def create(cls, settings):
+        #     self = Table()
+        #     self.settings = settings
+        #     print(settings)
+        #     return self
