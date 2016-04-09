@@ -53,8 +53,6 @@ class Table:
 
     async def update_table(self):
         raw = await self.get_spreadsheet()
-        if self.table:
-            print('updating table {}'.format(self.table[:20]))
         self.table = self.build_html_table(raw)
         return self.table
 
@@ -76,12 +74,14 @@ class Table:
     @staticmethod
     def key_to_number(key):
         def result(item):
+            print('item[key]: {}'.format(item[key]))
             return item[key] if item[key] != '' else 0
 
         return result
 
     def build_html_table(self, records):
         for key, order in zip(self.sort_by, self.sort_asc):
+            print(key)
             records.sort(key=self.key_to_number(key), reverse=order)
 
         records = self.filter_dict(records, self.columns_to_display)
