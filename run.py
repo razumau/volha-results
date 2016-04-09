@@ -60,6 +60,7 @@ def main():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(schedule_tables_update, trigger='interval', minutes=INTERVAL,
                       args=(list_of_tables,))
+    scheduler.start()
 
     sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
     sslcontext.load_cert_chain('unified.crt', 'private.key')

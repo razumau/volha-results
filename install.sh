@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:fkrull/deadsnakes
 sudo apt-get update
