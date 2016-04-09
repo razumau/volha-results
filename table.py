@@ -74,14 +74,12 @@ class Table:
     @staticmethod
     def key_to_number(key):
         def result(item):
-            print('item[key]: {}'.format(item[key]))
             return item[key] if item[key] != '' else 0
 
         return result
 
     def build_html_table(self, records):
-        for key, order in zip(self.sort_by, self.sort_asc):
-            print(key)
+        for key, order in zip(reversed(self.sort_by), reversed(self.sort_asc)):
             records.sort(key=self.key_to_number(key), reverse=order)
 
         records = self.filter_dict(records, self.columns_to_display)
