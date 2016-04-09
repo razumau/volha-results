@@ -37,7 +37,8 @@ async def get_tables(gspread):
 
 
 def schedule_tables_update(list_of_tables):
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     loop.run_until_complete(update_tables(list_of_tables))
 
 
