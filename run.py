@@ -7,8 +7,8 @@ import gspread as gs
 import sqlalchemy as sa
 from aiohttp import web
 from aiopg.sa import create_engine
-from oauth2client.client import SignedJwtAssertionCredentials
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from oauth2client.client import SignedJwtAssertionCredentials
 
 from table import Table, configs
 
@@ -58,7 +58,8 @@ def main():
     loop.run_until_complete(update_tables(list_of_tables))
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(schedule_tables_update, trigger='interval', minutes=INTERVAL)
+    scheduler.add_job(schedule_tables_update, trigger='interval', minutes=INTERVAL,
+                      args=(list_of_tables,))
 
     sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
     sslcontext.load_cert_chain('unified.crt', 'private.key')
