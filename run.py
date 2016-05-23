@@ -63,8 +63,8 @@ def main():
                       args=(list_of_tables,))
     scheduler.start()
 
-    sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-    sslcontext.load_cert_chain('unified.crt', 'private.key')
+    # sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    # sslcontext.load_cert_chain('unified.crt', 'private.key')
     app = web.Application()
     app['list_of_tables'] = list_of_tables
     cors = aiohttp_cors.setup(app)
@@ -72,7 +72,7 @@ def main():
     cors.add(resource.add_route('GET', get_html_table), {
         "*": aiohttp_cors.ResourceOptions()
     })
-    web.run_app(app, ssl_context=sslcontext)
+    web.run_app(app)#, ssl_context=sslcontext)
 
 
 if __name__ == '__main__':
