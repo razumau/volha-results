@@ -84,7 +84,10 @@ class Table:
     @staticmethod
     def key_to_number(key):
         def result(item):
-            return item[key] if item[key] != '' else 0
+            try:
+                return int(item[key]) if item[key] != '' else 0
+            except ValueError:
+                return 0
 
         return result
 

@@ -26,7 +26,7 @@ def init_gspread():
 async def get_tables(gspread):
     result = {}
     credentials = json.load(open('credentials.json'))
-    engine = await create_engine(host='127.0.0.1', database='volha', user='admin',
+    engine = await create_engine(host=credentials['postgres_host'], database='volha', user='admin',
                                  password=credentials['postgres_password'])
     async with engine:
         async with engine.acquire() as conn:
