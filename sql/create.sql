@@ -8,6 +8,6 @@ columns_to_display text,
 sort_by text,
 sort_asc boolean[],
 rating_release integer,
-check_column text
+check_column text,
 )
 

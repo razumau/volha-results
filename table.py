@@ -1,5 +1,6 @@
 from functools import wraps
 
+import aiohttp
 import sqlalchemy as sa
 
 
@@ -29,8 +30,6 @@ configs = sa.Table('tables', metadata,
 
 class Table:
     def __init__(self, settings, gspread):
-        # TODO schedule
-        # TODO read from postgres
         self.settings = settings
         self.try_to_split('columns_to_extract')
         self.interval = self.settings['interval']
@@ -38,6 +37,7 @@ class Table:
         self.columns_to_display = self.settings['columns_to_display'].split(' ')
         self.sort_by = self.settings['sort_by'].split(' ') if self.settings['sort_by'] is not None else []
         self.sort_asc = self.settings['sort_asc']
+        self.rating_release = self.settings['rating_release']
         self.check = self.settings['check_column'] if self.settings['check_column'] else []
         self.gspread = gspread
         self.table = None
@@ -53,7 +53,10 @@ class Table:
 
     async def update_table(self):
         raw = await self.get_spreadsheet()
+        if self.rating_release:
+            await self.add_rating(raw)
         self.table = self.build_html_table(raw)
+
         return self.table
 
     async def get_spreadsheet(self):
@@ -65,11 +68,18 @@ class Table:
         records = [{k.lower(): v for k, v in _dict.items()} for _dict in records]
         return self.filter_dict(records, self.columns_to_extract + self.sort_by + self.check)
 
-    @staticmethod
-    def add_rating(raw_table):
-        # TODO: rating api
+    async def add_rating(self, raw_table):
         for team in raw_table:
-            team['рейтинг'] = team['id']
+            team['рейтинг'] = await self.get_rating_position(team['id'], self.rating_release)
+
+    @staticmethod
+    async def get_rating_position(team_id, release):
+        with aiohttp.ClientSession() as session:
+            url = 'http://rating.chgk.info/api/teams/{id}/rating/{release}.json'.format(
+                id=team_id, release=release)
+            async with session.get(url) as response:
+                result = await response.json()
+                return result['rating_position']
 
     @staticmethod
     def key_to_number(key):
@@ -97,16 +107,6 @@ class Table:
     def build_cell(self, value):
         return '<td>' + str(value) + '</td>'
 
-    async def save_to_db(self):
-        pass
-
     @staticmethod
     def filter_dict(list_of_dicts, fields):
         return [{k: v for (k, v) in _dict.items() if k in fields} for _dict in list_of_dicts]
-
-        # @classmethod
-        # async def create(cls, settings):
-        #     self = Table()
-        #     self.settings = settings
-        #     print(settings)
-        #     return self
