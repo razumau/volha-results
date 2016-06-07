@@ -79,7 +79,10 @@ class Table:
                 id=team_id, release=release)
             async with session.get(url) as response:
                 result = await response.json()
-                return result['rating_position']
+                try:
+                    return result['rating_position']
+                except TypeError:
+                    return 9999
 
     @staticmethod
     def key_to_number(key):
