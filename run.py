@@ -1,29 +1,19 @@
 import asyncio
 import json
-import ssl
 
 import aiohttp_cors
-import gspread as gs
+
 import sqlalchemy as sa
 from aiohttp import web
 from aiopg.sa import create_engine
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from oauth2client.client import SignedJwtAssertionCredentials
 
 from table import Table, configs
 
 INTERVAL = 2
 
 
-def init_gspread():
-    json_key = json.load(open('credentials.json'))
-    scope = ['https://spreadsheets.google.com/feeds']
-    credentials = SignedJwtAssertionCredentials(json_key['client_email'],
-                                                json_key['private_key'].encode(), scope)
-    return gs.authorize(credentials)
-
-
-async def get_tables(gspread):
+async def get_tables():
     result = {}
     credentials = json.load(open('credentials.json'))
     engine = await create_engine(host=credentials['postgres_host'], database='volha', user='admin',
@@ -32,7 +22,7 @@ async def get_tables(gspread):
         async with engine.acquire() as conn:
             query = sa.select('*', ).select_from(configs)
             async for row in conn.execute(query):
-                result[row.url] = Table(dict(row), gspread)
+                result[row.url] = Table(dict(row))
     return result
 
 
@@ -55,7 +45,7 @@ async def get_html_table(request):
 def main():
     loop = asyncio.get_event_loop()
 
-    list_of_tables = loop.run_until_complete(get_tables(init_gspread()))
+    list_of_tables = loop.run_until_complete(get_tables())
     loop.run_until_complete(update_tables(list_of_tables))
 
     scheduler = AsyncIOScheduler()

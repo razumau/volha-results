@@ -1,7 +1,10 @@
+import json
 from functools import wraps
 
 import aiohttp
+import gspread as gs
 import sqlalchemy as sa
+from oauth2client.client import SignedJwtAssertionCredentials
 
 
 def add_italic(func):
@@ -29,7 +32,7 @@ configs = sa.Table('tables', metadata,
 
 
 class Table:
-    def __init__(self, settings, gspread):
+    def __init__(self, settings):
         self.settings = settings
         self.try_to_split('columns_to_extract')
         self.interval = self.settings['interval']
@@ -39,7 +42,6 @@ class Table:
         self.sort_asc = self.settings['sort_asc']
         self.rating_release = self.settings['rating_release']
         self.check = self.settings['check_column'] if self.settings['check_column'] else []
-        self.gspread = gspread
         self.table = None
 
     async def get_html_table(self):
@@ -60,7 +62,8 @@ class Table:
         return self.table
 
     async def get_spreadsheet(self):
-        spreadsheet = self.gspread.open_by_key(self.settings['url'])
+        gspread = self.init_gspread()
+        spreadsheet = gspread.open_by_key(self.settings['url'])
         if self.settings['sheet']:
             records = spreadsheet.worksheet(self.settings['sheet']).get_all_records()
         else:
@@ -116,3 +119,11 @@ class Table:
     @staticmethod
     def filter_dict(list_of_dicts, fields):
         return [{k: v for (k, v) in _dict.items() if k in fields} for _dict in list_of_dicts]
+
+    @staticmethod
+    def init_gspread():
+        json_key = json.load(open('credentials.json'))
+        scope = ['https://spreadsheets.google.com/feeds']
+        credentials = SignedJwtAssertionCredentials(json_key['client_email'],
+                                                    json_key['private_key'].encode(), scope)
+        return gs.authorize(credentials)

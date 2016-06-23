@@ -8,6 +8,10 @@ sudo pip3 install virtualenv
 cd /root/results
 git fetch
 git reset --hard origin/master
-virtualenv -p /usr/bin/python3.5 /tmp/results
-source /tmp/results/bin/activate
+virtualenv -p /usr/bin/python3.5 /root/results_env
+source /root/results_env/bin/activate
 pip3 install -r /root/results/requirements.txt
+forever stopall
+forever start -c /root/results_env/bin/python3.5 run.py
+forever list
+
