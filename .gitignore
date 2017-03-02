@@ -4,6 +4,6 @@ node_modules/*
 *.key
 unified.crt
 *.log
-.idea/*
 credentials.json
 *.pyc
+.idea
