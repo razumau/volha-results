@@ -7,7 +7,5 @@ unified.crt
 credentials.json
 *.pyc
 .idea
-
-.idea/results.iml
-
-.idea/misc.xml
+config.conf
+*.csv
